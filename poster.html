@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poster QR – Phòng thực tập Châm cứu</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+@page{size:A4;margin:0}
+body{margin:0;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1B2421;background:#fff}
+.sheet{width:210mm;min-height:297mm;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+.head{width:100%;background:#1E5B4F;color:#fff;text-align:center;padding:14mm 8mm 10mm;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.head small{display:block;font-size:13pt;line-height:1.5}
+.head h1{margin:6mm 0 0;font-size:34pt;line-height:1.1}
+.lead{font-size:22pt;margin:12mm 0 0}
+.lead b{display:block;color:#1E5B4F;font-size:22pt}
+#qr{margin:10mm 0 6mm}
+#url{font-size:10pt;color:#5E6B66;word-break:break-all;padding:0 20mm;text-align:center}
+ol{font-size:15pt;line-height:1.7;margin:8mm 20mm 0;padding-left:8mm}
+.foot{margin-top:auto;padding:8mm;font-size:11pt;color:#5E6B66;text-align:center}
+.no-print{margin:10px;text-align:center}
+@media print{.no-print{display:none}}
+</style></head><body>
+<div class="no-print"><button onclick="print()">In poster</button></div>
+<div class="sheet">
+  <div class="head"><small>TRƯỜNG ĐẠI HỌC Y DƯỢC CẦN THƠ – KHOA Y HỌC CỔ TRUYỀN</small><small>BỘ MÔN CHÂM CỨU – XOA BÓP – DƯỠNG SINH</small><h1>PHÒNG THỰC TẬP CHÂM CỨU</h1></div>
+  <p class="lead">Quét mã để <b>Mượn phòng · Xem lịch · Báo cáo 6S-3R</b></p>
+  <div id="qr"></div><div id="url"></div>
+  <ol>
+    <li>Đăng ký mượn phòng trước buổi sử dụng, chờ Bộ môn duyệt.</li>
+    <li>Kiểm tra thiết bị trước – sau sử dụng; báo hỏng trong 24 giờ.</li>
+    <li>Thực hiện 6S khi trả phòng, bấm “Trả phòng” trên hệ thống.</li>
+    <li>Không tái sử dụng kim; bỏ vật sắc nhọn đúng hộp quy định.</li>
+  </ol>
+  <div class="foot">Áp dụng theo QT-BMCC-TS-01 – Quy trình quản lý tài sản Bộ môn</div>
+</div>
+<script>
+const u=new URL("./",location.href).href;
+document.getElementById("url").textContent=u;
+if(window.QRCode)new QRCode(document.getElementById("qr"),{text:u,width:420,height:420,colorDark:"#1E5B4F",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.Q});
+</script></body></html>
