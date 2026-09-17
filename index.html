@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PTT Châm cứu – Mượn phòng & 6S-3R</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#F6F8F6; --surface:#FFFFFF; --ink:#1B2421; --muted:#5E6B66; --line:#DCE3DF;
+  --jade:#1E5B4F; --jade-soft:#E3EFEB; --amber:#B7791F; --amber-soft:#FBF1DE;
+  --red:#B3372F; --red-soft:#F9E4E2; --ok:#2F7A4A; --ok-soft:#E2F2E7;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#111715; --surface:#19211E; --ink:#E6EDEA; --muted:#9AA8A2; --line:#2C3833;
+    --jade:#6FC2AE; --jade-soft:#1D332D; --amber:#E2B15A; --amber-soft:#342917;
+    --red:#EE8A80; --red-soft:#3A2220; --ok:#7BCB94; --ok-soft:#1C3324; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#19211E; --ink:#E6EDEA; --muted:#9AA8A2; --line:#2C3833;
+  --jade:#6FC2AE; --jade-soft:#1D332D; --amber:#E2B15A; --amber-soft:#342917;
+  --red:#EE8A80; --red-soft:#3A2220; --ok:#7BCB94; --ok-soft:#1C3324; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5;padding-bottom:84px}
+img{max-width:100%}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header.top{padding:18px 0 8px}
+.brand{font-size:13px;color:var(--muted)}
+h1{font-size:22px;line-height:1.25;margin:2px 0 0;font-weight:700}
+h2{font-size:18px;margin:22px 0 10px;font-weight:600}
+h3{font-size:15px;margin:16px 0 6px;font-weight:600}
+.status{margin:14px 0 6px;border-radius:18px;padding:18px;background:var(--jade);color:#fff;position:relative;overflow:hidden}
+:root[data-theme="dark"] .status,.status{}
+.status .big{font-size:28px;font-weight:700;line-height:1.15}
+.status .sub{opacity:.9;margin-top:4px}
+.status.busy{background:var(--red)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .status{color:#0f1512}}
+:root[data-theme="dark"] .status{color:#0f1512}
+.status select{margin-top:10px;background:rgba(255,255,255,.18);color:inherit;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:6px 10px;font:inherit}
+.status select option{color:#1B2421}
+.banner{background:var(--amber-soft);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;margin:10px 0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+textarea{min-height:64px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--jade);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:480px){.row3{grid-template-columns:1fr 1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px;background:var(--bg);cursor:pointer;user-select:none}
+.chip input{width:auto;margin:0}
+.chip.on{background:var(--jade-soft);border-color:var(--jade)}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px}
+button.primary{background:var(--jade);border-color:var(--jade);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#0f1512}}
+:root[data-theme="dark"] button.primary{color:#0f1512}
+button.sm{padding:5px 10px;font-size:13px}
+button.danger{color:var(--red);border-color:var(--red)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.msg{font-size:13px;margin-top:8px}
+.msg.err{color:var(--red)} .msg.ok{color:var(--ok)}
+.day{margin:14px 0 4px;font-weight:600;font-size:14px;color:var(--muted)}
+.bk{display:grid;grid-template-columns:78px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.bk:first-of-type{border-top:0}
+.time{font-weight:600;font-variant-numeric:tabular-nums}
+.meta{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;border-radius:6px;padding:1px 7px;margin-left:4px;vertical-align:1px}
+.t-pending{background:var(--amber-soft);color:var(--amber)}
+.t-approved{background:var(--ok-soft);color:var(--ok)}
+.t-rejected,.t-cancelled{background:var(--red-soft);color:var(--red)}
+.t-done{background:var(--jade-soft);color:var(--jade)}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5}
+.tabs button{flex:1;max-width:190px;border:0;border-radius:0;background:transparent;padding:10px 4px 14px;font-size:13px;color:var(--muted)}
+.tabs button[aria-selected="true"]{color:var(--jade);font-weight:600;box-shadow:inset 0 3px 0 var(--jade)}
+.hidden{display:none!important}
+.s-group{border-top:1px solid var(--line);padding-top:8px;margin-top:12px}
+.s-group:first-child{border-top:0;margin-top:0}
+.s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.s-name{font-weight:600}
+.item{padding:8px 0}
+.item .q{font-size:14px}
+.seg{display:flex;gap:4px;margin-top:6px}
+.seg button{flex:1;padding:6px 4px;font-size:13px}
+.seg button.sel0{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.seg button.sel1{background:var(--amber-soft);border-color:var(--amber);color:var(--amber)}
+.seg button.sel2{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.item input.note{margin-top:6px;font-size:13px;padding:6px 8px}
+.scorebar{position:sticky;top:0;z-index:4;background:var(--bg);padding:8px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.scorebar .pct{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.chart{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+.tbl{overflow-x:auto}
+th,td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:500}
+details summary{cursor:pointer}
+@media (prefers-reduced-motion:no-preference){.status{transition:background .3s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Bộ môn Châm cứu – Xoa bóp – Dưỡng sinh · Khoa Y học cổ truyền · ĐH Y Dược Cần Thơ</div>
+    <h1>Phòng thực tập Châm cứu</h1>
+  </header>
+
+  <div id="status" class="status" aria-live="polite">
+    <div class="big" id="stBig">Đang tải…</div>
+    <div class="sub" id="stSub"></div>
+    <select id="stRoom" aria-label="Chọn phòng"></select>
+  </div>
+  <div id="offline" class="banner hidden"></div>
+
+  <!-- ===== TAB: MƯỢN PHÒNG ===== -->
+  <section id="tab-book">
+    <h2>Đăng ký mượn phòng</h2>
+    <div class="panel">
+      <div class="row">
+        <div><label for="bName">Họ tên người mượn *</label><input id="bName" autocomplete="name"></div>
+        <div><label for="bUnit">Đơn vị / Lớp *</label><input id="bUnit" placeholder="VD: YHCT K48, BM CC-XB-DS"></div>
+      </div>
+      <div class="row">
+        <div><label for="bPhone">Điện thoại</label><input id="bPhone" inputmode="tel"></div>
+        <div><label for="bRoom">Phòng *</label><select id="bRoom"></select></div>
+      </div>
+      <label for="bPurpose">Mục đích *</label>
+      <select id="bPurpose">
+        <option>Thực hành học phần</option><option>Thi thực hành / OSCE</option><option>Tự học có giám sát</option>
+        <option>Nghiên cứu khoa học</option><option>Tập huấn / Hội thảo</option><option>Khác</option>
+      </select>
+      <div class="row3">
+        <div><label for="bDate">Ngày *</label><input id="bDate" type="date"></div>
+        <div><label for="bStart">Từ *</label><input id="bStart" type="time" value="07:00" step="300"></div>
+        <div><label for="bEnd">Đến *</label><input id="bEnd" type="time" value="09:30" step="300"></div>
+      </div>
+      <div class="meta">Tiết 1 bắt đầu lúc 7:00.</div>
+      <div class="row">
+        <div><label for="bPeople">Số người</label><input id="bPeople" type="number" min="1" max="60" value="10"></div>
+        <div><label for="bGv">GV phụ trách / giám sát</label><input id="bGv"></div>
+      </div>
+      <label>Thiết bị cần dùng</label>
+      <div class="chips" id="bEquip"></div>
+      <label for="bNote">Ghi chú</label>
+      <textarea id="bNote" placeholder="Yêu cầu thêm, số giường cần dùng…"></textarea>
+      <label class="chip" style="margin-top:12px"><input type="checkbox" id="bCommit"> Tôi cam kết tuân thủ nội quy phòng, thực hiện 6S khi trả phòng và báo hỏng trong 24 giờ.</label>
+      <div class="actions"><button class="primary" id="bSubmit">Gửi đăng ký</button></div>
+      <div class="msg" id="bMsg" role="status"></div>
+    </div>
+
+    <h2>Đăng ký của tôi</h2>
+    <div class="panel" id="myList"><div class="meta">Chưa có đăng ký.</div></div>
+  </section>
+
+  <!-- ===== TAB: LỊCH ===== -->
+  <section id="tab-cal" class="hidden">
+    <h2>Lịch sử dụng phòng</h2>
+    <div class="panel">
+      <div class="row">
+        <div><label for="cRoom">Phòng</label><select id="cRoom"></select></div>
+        <div><label for="cFrom">Từ ngày</label><input id="cFrom" type="date"></div>
+      </div>
+      <label class="chip" style="margin-top:10px"><input type="checkbox" id="cPendingOnly"> Chỉ hiện đăng ký chờ duyệt</label>
+    </div>
+    <div class="panel" id="calList"></div>
+  </section>
+
+  <!-- ===== TAB: 6S-3R ===== -->
+  <section id="tab-6s" class="hidden">
+    <h2>Báo cáo 6S – 3R định kỳ</h2>
+    <div class="panel">
+      <div class="row">
+        <div><label for="rDate">Ngày đánh giá *</label><input id="rDate" type="date"></div>
+        <div><label for="rPeriod">Kỳ *</label><select id="rPeriod"><option>Hằng tuần</option><option>Hằng tháng</option><option>Đột xuất</option><option>Trước/sau đợt thực tập</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="rRoom">Phòng *</label><select id="rRoom"></select></div>
+        <div><label for="rWho">Người đánh giá *</label><input id="rWho"></div>
+      </div>
+      <label for="rPin">Mã GV (nếu Bộ môn yêu cầu)</label><input id="rPin" type="password" autocomplete="off">
+    </div>
+    <div class="scorebar"><div><div class="meta">Điểm hiện tại</div><div class="pct" id="rPct">–</div></div><div id="rGrade" class="tag">Chưa chấm</div></div>
+    <div class="panel" id="checklist"></div>
+    <div class="panel">
+      <label for="rIssues">Tồn tại chính</label><textarea id="rIssues"></textarea>
+      <label for="rAction">Biện pháp khắc phục</label><textarea id="rAction"></textarea>
+      <div class="row">
+        <div><label for="rOwner">Người phụ trách khắc phục</label><input id="rOwner"></div>
+        <div><label for="rDeadline">Hạn hoàn thành</label><input id="rDeadline" type="date"></div>
+      </div>
+      <div class="actions"><button class="primary" id="rSubmit">Lưu báo cáo</button><button id="rReset">Làm lại</button></div>
+      <div class="msg" id="rMsg" role="status"></div>
+    </div>
+    <h2>Các báo cáo gần đây</h2>
+    <div class="panel" id="repList"><div class="meta">Chưa có báo cáo.</div></div>
+  </section>
+
+  <!-- ===== TAB: TỔNG HỢP ===== -->
+  <section id="tab-sum" class="hidden">
+    <h2>Tổng hợp</h2>
+    <div class="panel">
+      <div class="row">
+        <div><label for="sMonth">Tháng</label><input id="sMonth" type="month"></div>
+        <div><label for="sRoom">Phòng</label><select id="sRoom"></select></div>
+      </div>
+    </div>
+    <div class="stats" id="sStats"></div>
+    <h3>Xu hướng điểm 6S – 3R</h3>
+    <div class="panel chart" id="sChart"></div>
+    <h3>Điểm trung bình theo nhóm (tháng đã chọn)</h3>
+    <div class="panel" id="sGroups"></div>
+    <div class="actions" id="dlBox"><button id="dlBk">Tải CSV lượt mượn</button><button id="dlRp">Tải CSV báo cáo 6S</button></div>
+    <div class="msg" id="dlMsg"></div>
+    <h3>Mã QR của trang</h3>
+    <div class="panel"><button id="qrBtn">Hiện mã QR để in</button><div id="qrBox" class="hidden" style="margin-top:10px"></div>
+      <div class="meta" style="margin-top:6px">Mở <a href="poster.html">poster.html</a> để in poster A4 dán cửa phòng.</div></div>
+    <div id="loginBox">
+      <h3>Đăng nhập quản trị</h3>
+      <div class="panel"><label for="loginPin">Mã quản trị</label><input id="loginPin" type="password" autocomplete="off">
+        <div class="actions"><button id="loginBtn">Đăng nhập</button></div><div class="msg" id="loginMsg"></div></div>
+    </div>
+    <div id="adminBox" class="hidden">
+      <div class="actions"><button id="logoutBtn" class="sm">Đăng xuất quản trị</button></div>
+      <h3>Cấu hình phòng (quản trị)</h3>
+      <div class="panel">
+        <label for="aRooms">Danh sách phòng, mỗi dòng một phòng</label>
+        <textarea id="aRooms"></textarea>
+        <div class="actions"><button id="aSave">Lưu danh sách phòng</button></div>
+        <div class="msg" id="aMsg"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-t="book" aria-selected="true">Mượn phòng</button>
+  <button role="tab" data-t="cal" aria-selected="false">Lịch phòng</button>
+  <button role="tab" data-t="6s" aria-selected="false">Báo cáo 6S-3R</button>
+  <button role="tab" data-t="sum" aria-selected="false">Tổng hợp</button>
+</nav>
+
+<script>
+/* ====== CẤU HÌNH: dán URL Web App của Google Apps Script vào đây ====== */
+const API_URL = "PASTE_APPS_SCRIPT_WEB_APP_URL_HERE";
+/* ====================================================================== */
+(function(){
+const $=id=>document.getElementById(id);
+const DEFAULT_ROOMS=["Phòng thực tập Châm cứu"];
+const EQUIP=["Máy điện châm","Máy TENS","Đèn hồng ngoại","Mô hình huyệt vị","Giường thủ thuật","Bộ giác hơi","Dụng cụ cứu ngải","Máy chiếu"];
+const STATUS={pending:"Chờ duyệt",approved:"Đã duyệt",rejected:"Từ chối",cancelled:"Đã hủy",done:"Đã trả phòng"};
+const GROUPS=[
+ {k:"S1",n:"Sàng lọc",items:["Không có vật dụng, tài liệu không cần thiết trên bàn, giường, tủ","Kim, vật tư hết hạn hoặc hỏng đã được loại bỏ, không để lẫn với vật tư dùng được"]},
+ {k:"S2",n:"Sắp xếp",items:["Thiết bị, mô hình đặt đúng vị trí theo sơ đồ; tủ, kệ có nhãn","Dây nguồn, điện cực máy điện châm cuộn gọn, không vướng lối đi","Vật tư xếp theo nguyên tắc hết hạn trước dùng trước"]},
+ {k:"S3",n:"Sạch sẽ",items:["Sàn, giường, gối, ga trải giường sạch; thay ga đúng quy định","Bề mặt thiết bị, khay dụng cụ được lau khử khuẩn sau buổi","Bồn rửa tay có xà phòng hoặc dung dịch sát khuẩn tay"]},
+ {k:"S4",n:"Săn sóc",items:["Nhật ký sử dụng và lịch vệ sinh được ghi đầy đủ","Bảng phân công 6S, sơ đồ phòng, HDSD thiết bị niêm yết rõ ràng"]},
+ {k:"S5",n:"Sẵn sàng",items:["Người sử dụng mặc trang phục đúng quy định, tuân thủ nội quy","Trả phòng đúng giờ; tắt thiết bị, đèn, điều hòa khi rời phòng"]},
+ {k:"S6",n:"An toàn",items:["Hộp đựng vật sắc nhọn đúng chuẩn, không đầy quá 3/4","Thiết bị điện không hở dây; đèn hồng ngoại có giá đỡ chắc chắn","Có hộp chống sốc, dụng cụ xử trí vựng châm và phương tiện PCCC còn hạn"]},
+ {k:"R1",n:"Reduce – Giảm thiểu",items:["Tiết kiệm điện, nước; hạn chế in giấy, dùng tài liệu điện tử"]},
+ {k:"R2",n:"Reuse – Tái sử dụng",items:["Tái sử dụng hợp lý vật dụng không tiếp xúc người bệnh; tuyệt đối không tái sử dụng kim và vật tư dùng một lần"]},
+ {k:"R3",n:"Recycle – Tái chế",items:["Phân loại chất thải đúng: lây nhiễm, sắc nhọn, tái chế, thông thường"]}
+];
+const ALL_ITEMS=GROUPS.flatMap(g=>g.items.map((q,i)=>({code:g.k+"."+(i+1),g:g.k,q})));
+
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const SS={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}}};
+let uid=LS.get("ptt_cid");if(!uid){uid=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));LS.set("ptt_cid",uid)}
+let pin=SS.get("ptt_pin"),isAdmin=false,live=/^https:\/\/script\.google\.com\//.test(API_URL);
+async function api(action,payload={}){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,cid:uid,pin,...payload})});
+  const j=await r.json();if(!j.ok)throw new Error(j.error||"Lỗi máy chủ");return j;
+}
+async function load(){if(!live)return;try{const j=await api("list");bookings=j.data.bookings;reports=j.data.reports;rooms=j.data.rooms;isAdmin=!!j.data.admin;
+  $("adminBox").classList.toggle("hidden",!isAdmin);$("loginBox").classList.toggle("hidden",isAdmin);fillRooms();renderAll();$("offline").classList.add("hidden")}
+  catch(e){$("offline").textContent="Không tải được dữ liệu: "+e.message;$("offline").classList.remove("hidden")}}
+let bookings=[],reports=[],rooms=DEFAULT_ROOMS.slice();
+let scores={},notes={};
+
+const pad=n=>String(n).padStart(2,"0");
+const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const nowHM=()=>{const d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())};
+const toMin=s=>{const[a,b]=(s||"0:0").split(":").map(Number);return a*60+b};
+const fmtDate=s=>{if(!s)return"";const[y,m,d]=s.split("-");const wd=["CN","T2","T3","T4","T5","T6","T7"][new Date(+y,+m-1,+d).getDay()];return wd+", "+d+"/"+m+"/"+y};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function grade(p){if(p==null)return["Chưa chấm","t-pending"];if(p>=90)return["Tốt","t-approved"];if(p>=75)return["Khá","t-done"];if(p>=60)return["Trung bình","t-pending"];return["Không đạt","t-rejected"]}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
+  ["book","cal","6s","sum"].forEach(t=>$("tab-"+t).classList.toggle("hidden",t!==b.dataset.t));
+  if(b.dataset.t==="sum")renderSummary();
+  window.scrollTo({top:0});
+}));
+
+/* ---------- rooms ---------- */
+function fillRooms(){
+  ["stRoom","bRoom","cRoom","rRoom","sRoom"].forEach(id=>{
+    const el=$(id),cur=el.value;
+    el.innerHTML=(id==="sRoom"||id==="cRoom"?'<option value="">Tất cả phòng</option>':"")+rooms.map(r=>`<option>${esc(r)}</option>`).join("");
+    if([...el.options].some(o=>o.value===cur))el.value=cur;
+  });
+  $("stRoom").classList.toggle("hidden",rooms.length<2);
+  $("aRooms").value=rooms.join("\n");
+}
+
+/* ---------- status hero ---------- */
+function renderStatus(){
+  const room=$("stRoom").value||rooms[0],t=todayStr(),n=toMin(nowHM());
+  const today=bookings.filter(b=>b.room===room&&b.date===t&&b.status==="approved").sort((a,b)=>toMin(a.start)-toMin(b.start));
+  const cur=today.find(b=>toMin(b.start)<=n&&n<toMin(b.end));
+  const next=today.find(b=>toMin(b.start)>n);
+  const st=$("status");
+  if(cur){st.classList.add("busy");$("stBig").textContent="Đang sử dụng đến "+cur.end;
+    $("stSub").textContent=`${cur.unit} · ${cur.purpose}`+(next?` · Tiếp theo: ${next.start}–${next.end}`:"");}
+  else{st.classList.remove("busy");$("stBig").textContent="Phòng đang trống";
+    $("stSub").textContent=next?`Lượt tiếp theo hôm nay: ${next.start}–${next.end} (${next.unit})`:"Không còn lịch đã duyệt trong hôm nay";}
+}
+
+/* ---------- booking form ---------- */
+$("bEquip").innerHTML=EQUIP.map((e,i)=>`<label class="chip"><input type="checkbox" value="${esc(e)}" id="eq${i}"> ${esc(e)}</label>`).join("");
+$("bEquip").addEventListener("change",e=>{if(e.target.type==="checkbox")e.target.parentElement.classList.toggle("on",e.target.checked)});
+$("bDate").value=todayStr();$("bDate").min=todayStr();
+
+function conflicts(b,ignoreId){
+  return bookings.filter(x=>x.id!==ignoreId&&x.room===b.room&&x.date===b.date&&(x.status==="approved"||x.status==="pending")
+    &&toMin(x.start)<toMin(b.end)&&toMin(b.start)<toMin(x.end));
+}
+function showMsg(el,txt,ok){el.textContent=txt;el.className="msg "+(ok?"ok":"err")}
+
+$("bSubmit").addEventListener("click",async()=>{
+  const b={name:$("bName").value.trim(),unit:$("bUnit").value.trim(),phone:$("bPhone").value.trim(),room:$("bRoom").value,
+    purpose:$("bPurpose").value,date:$("bDate").value,start:$("bStart").value,end:$("bEnd").value,
+    people:+$("bPeople").value||0,gv:$("bGv").value.trim(),note:$("bNote").value.trim(),
+    equipment:[...$("bEquip").querySelectorAll("input:checked")].map(i=>i.value)};
+  const m=$("bMsg");
+  if(!b.name||!b.unit||!b.date||!b.start||!b.end)return showMsg(m,"Vui lòng nhập đủ các mục có dấu *.");
+  if(toMin(b.end)<=toMin(b.start))return showMsg(m,"Giờ kết thúc phải sau giờ bắt đầu.");
+  if(b.date<todayStr())return showMsg(m,"Không thể đăng ký cho ngày đã qua.");
+  if(!$("bCommit").checked)return showMsg(m,"Vui lòng xác nhận cam kết tuân thủ nội quy.");
+  const c=conflicts(b);
+  if(c.length)return showMsg(m,"Trùng lịch với: "+c.map(x=>`${x.start}–${x.end} ${x.unit} (${STATUS[x.status]})`).join("; "));
+  Object.assign(b,{status:"pending",createdBy:uid||"",createdAt:new Date().toISOString()});
+  $("bSubmit").disabled=true;
+  try{
+    if(live){await api("addBooking",{booking:b});await load();}
+    else{b.id="local"+Date.now();b.mine=true;bookings.push(b);renderAll();}
+    LS.set("ptt_name",b.name);LS.set("ptt_unit",b.unit);
+    showMsg(m,"Đã gửi đăng ký. Trạng thái: chờ Bộ môn duyệt.",true);
+    $("bNote").value="";$("bCommit").checked=false;
+  }catch(e){showMsg(m,"Không lưu được: "+(e&&e.message||e));}
+  finally{$("bSubmit").disabled=false}
+});
+
+async function patchBooking(id,op,data){
+  if(live){try{await api("updateBooking",{id,op,data});await load();return true}
+    catch(e){if(e.message==="CONFLICT"){if(confirm("Đã có lượt được duyệt trùng giờ. Vẫn duyệt?"))return patchBooking(id,op,{...data,force:true});return false}
+      alert("Không cập nhật được: "+e.message);return false}}
+  const st={approve:"approved",reject:"rejected",cancel:"cancelled",return:"done"}[op];
+  Object.assign(bookings.find(x=>x.id===id),data,{status:st});renderAll();return true;
+}
+function bookingRow(b,opts={}){
+  const mine=!!b.mine;
+  let act="";
+  if(isAdmin&&b.status==="pending")act+=`<button class="sm primary" data-a="approve" data-id="${b.id}">Duyệt</button><button class="sm danger" data-a="reject" data-id="${b.id}">Từ chối</button>`;
+  if((mine||isAdmin)&&b.status==="pending")act+=`<button class="sm" data-a="cancel" data-id="${b.id}">Hủy</button>`;
+  if((mine||isAdmin)&&b.status==="approved"&&b.date<=todayStr())act+=`<button class="sm" data-a="return" data-id="${b.id}">Trả phòng</button>`;
+  return `<div class="bk"><div class="time">${esc(b.start)}<br><span class="meta">${esc(b.end)}</span></div>
+  <div><div><b>${esc(b.unit)}</b><span class="tag t-${b.status}">${STATUS[b.status]||b.status}</span></div>
+  <div class="meta">${opts.showDate?esc(fmtDate(b.date))+" · ":""}${esc(b.purpose)}${b.name?" · "+esc(b.name):""}${b.people?" · "+b.people+" người":""}${b.gv?" · GV: "+esc(b.gv):""}</div>
+  ${rooms.length>1?`<div class="meta">${esc(b.room)}</div>`:""}
+  ${b.equipment&&b.equipment.length?`<div class="meta">Thiết bị: ${esc(b.equipment.join(", "))}</div>`:""}
+  ${b.note?`<div class="meta">Ghi chú: ${esc(b.note)}</div>`:""}
+  ${b.reviewNote?`<div class="meta">Phản hồi BM: ${esc(b.reviewNote)}</div>`:""}
+  ${b.returnCondition?`<div class="meta">Tình trạng khi trả: ${esc(b.returnCondition)}</div>`:""}
+  ${isAdmin&&b.phone?`<div class="meta">ĐT: ${esc(b.phone)}</div>`:""}
+  ${act?`<div class="actions" style="margin-top:6px">${act}</div>`:""}</div></div>`;
+}
+document.addEventListener("click",async e=>{
+  const btn=e.target.closest("button[data-a]");if(!btn)return;
+  const id=btn.dataset.id,a=btn.dataset.a;
+  btn.disabled=true;
+  if(a==="approve"){await patchBooking(id,"approve",{});}
+  if(a==="reject"){const r=prompt("Lý do từ chối:");if(r!==null)await patchBooking(id,"reject",{reviewNote:r});}
+  if(a==="cancel"){if(confirm("Hủy đăng ký này?"))await patchBooking(id,"cancel",{});}
+  btn.disabled=false;
+  if(a==="return"){const r=prompt("Tình trạng phòng và thiết bị khi trả (VD: Đã 6S, thiết bị tốt / Máy điện châm số 2 hỏng núm):","Đã thực hiện 6S, thiết bị hoạt động tốt");if(r===null)return;
+    await patchBooking(id,"return",{returnCondition:r});}
+});
+
+function renderMine(){
+  const mine=bookings.filter(b=>b.mine).sort((a,b)=>(b.date+b.start).localeCompare(a.date+a.start)).slice(0,15);
+  $("myList").innerHTML=mine.length?mine.map(b=>bookingRow(b,{showDate:true})).join(""):`<div class="meta">Chưa có đăng ký trên thiết bị này.</div>`;
+}
+function renderCal(){
+  const room=$("cRoom").value,from=$("cFrom").value||todayStr(),pend=$("cPendingOnly").checked;
+  const list=bookings.filter(b=>(!room||b.room===room)&&b.date>=from&&b.status!=="cancelled"&&(!pend||b.status==="pending"))
+    .sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start)).slice(0,120);
+  if(!list.length){$("calList").innerHTML='<div class="meta">Không có lịch trong khoảng này.</div>';return}
+  let html="",day="";
+  list.forEach(b=>{if(b.date!==day){day=b.date;html+=`<div class="day">${esc(fmtDate(day))}</div>`}html+=bookingRow(b)});
+  $("calList").innerHTML=html;
+}
+$("cFrom").value=todayStr();
+["cRoom","cFrom","cPendingOnly"].forEach(id=>$(id).addEventListener("change",renderCal));
+$("stRoom").addEventListener("change",renderStatus);
+
+/* ---------- 6S checklist ---------- */
+function buildChecklist(){
+  $("checklist").innerHTML=GROUPS.map(g=>`<div class="s-group"><div class="s-head"><span class="s-name">${esc(g.k)} · ${esc(g.n)}</span><span class="meta" id="gp-${g.k}"></span></div>
+  ${g.items.map((q,i)=>{const c=g.k+"."+(i+1);return `<div class="item"><div class="q">${esc(q)}</div>
+   <div class="seg" data-code="${c}"><button data-v="0">Không đạt</button><button data-v="1">Một phần</button><button data-v="2">Đạt</button><button data-v="na">N/A</button></div>
+   <input class="note" data-note="${c}" placeholder="Ghi chú (nếu có)"></div>`}).join("")}</div>`).join("");
+}
+function calcScore(sc){
+  const vals=ALL_ITEMS.map(i=>sc[i.code]).filter(v=>v===0||v===1||v===2);
+  if(!vals.length)return null;return Math.round(vals.reduce((a,b)=>a+b,0)/(vals.length*2)*100);
+}
+function groupScore(sc,k){const v=ALL_ITEMS.filter(i=>i.g===k).map(i=>sc[i.code]).filter(v=>v===0||v===1||v===2);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/(v.length*2)*100):null}
+function refreshScore(){
+  document.querySelectorAll(".seg").forEach(s=>{const v=scores[s.dataset.code];s.querySelectorAll("button").forEach(b=>{b.className="";const bv=b.dataset.v==="na"?"na":+b.dataset.v;if(v===bv)b.className=bv==="na"?"sel1":"sel"+bv})});
+  GROUPS.forEach(g=>{const p=groupScore(scores,g.k);$("gp-"+g.k).textContent=p==null?"":p+"%"});
+  const p=calcScore(scores);$("rPct").textContent=p==null?"–":p+"%";
+  const [gl,gc]=grade(p);$("rGrade").textContent=gl;$("rGrade").className="tag "+gc;
+}
+buildChecklist();
+$("checklist").addEventListener("click",e=>{const b=e.target.closest(".seg button");if(!b)return;const c=b.parentElement.dataset.code;
+  scores[c]=b.dataset.v==="na"?"na":+b.dataset.v;refreshScore()});
+$("checklist").addEventListener("input",e=>{if(e.target.dataset.note)notes[e.target.dataset.note]=e.target.value});
+$("rDate").value=todayStr();
+function resetReport(){scores={};notes={};document.querySelectorAll("[data-note]").forEach(i=>i.value="");["rIssues","rAction","rOwner","rDeadline"].forEach(id=>$(id).value="");refreshScore()}
+$("rReset").addEventListener("click",()=>{if(confirm("Xóa các mục đã chấm?"))resetReport()});
+$("rSubmit").addEventListener("click",async()=>{
+  const m=$("rMsg");
+  const missing=ALL_ITEMS.filter(i=>scores[i.code]===undefined).length;
+  if(!$("rWho").value.trim()||!$("rDate").value)return showMsg(m,"Vui lòng nhập ngày và người đánh giá.");
+  if(missing)return showMsg(m,`Còn ${missing} tiêu chí chưa chấm (chọn N/A nếu không áp dụng).`);
+  const r={date:$("rDate").value,period:$("rPeriod").value,room:$("rRoom").value,assessor:$("rWho").value.trim(),
+    scores:{...scores},notes:Object.fromEntries(Object.entries(notes).filter(([,v])=>v.trim())),score:calcScore(scores),
+    groups:Object.fromEntries(GROUPS.map(g=>[g.k,groupScore(scores,g.k)])),
+    issues:$("rIssues").value.trim(),action:$("rAction").value.trim(),owner:$("rOwner").value.trim(),deadline:$("rDeadline").value,
+    createdAt:new Date().toISOString()};
+  if(r.score<75&&!r.action)return showMsg(m,"Điểm dưới 75%: vui lòng ghi biện pháp khắc phục.");
+  $("rSubmit").disabled=true;
+  try{
+    if(live){await api("addReport",{report:r,staffPin:$("rPin").value.trim()});LS.set("ptt_who",r.assessor);await load()}else{r.id="local"+Date.now();reports.push(r);renderAll()}
+    showMsg(m,`Đã lưu báo cáo: ${r.score}% – ${grade(r.score)[0]}.`,true);resetReport();
+  }catch(e){showMsg(m,"Không lưu được: "+(e&&e.message||e))}
+  finally{$("rSubmit").disabled=false}
+});
+function renderReports(){
+  const list=reports.slice().sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt)).slice(0,20);
+  if(!list.length){$("repList").innerHTML='<div class="meta">Chưa có báo cáo.</div>';return}
+  $("repList").innerHTML=list.map(r=>{const[gl,gc]=grade(r.score);
+    const weak=ALL_ITEMS.filter(i=>r.scores&&r.scores[i.code]===0);
+    return `<details class="bk" style="display:block"><summary><b>${esc(fmtDate(r.date))}</b> · ${esc(r.period)} <span class="tag ${gc}">${r.score}% ${gl}</span>
+    <div class="meta">${esc(r.assessor)}${rooms.length>1?" · "+esc(r.room):""}</div></summary>
+    <div class="meta" style="margin-top:6px">${GROUPS.map(g=>`${g.k}: ${r.groups&&r.groups[g.k]!=null?r.groups[g.k]+"%":"N/A"}`).join(" · ")}</div>
+    ${weak.length?`<div class="meta" style="margin-top:4px"><b>Không đạt:</b> ${weak.map(w=>esc(w.code+" "+w.q)).join("; ")}</div>`:""}
+    ${r.issues?`<div class="meta"><b>Tồn tại:</b> ${esc(r.issues)}</div>`:""}
+    ${r.action?`<div class="meta"><b>Khắc phục:</b> ${esc(r.action)}${r.owner?" – "+esc(r.owner):""}${r.deadline?" – hạn "+esc(fmtDate(r.deadline)):""}</div>`:""}
+    </details>`}).join("");
+}
+
+/* ---------- summary ---------- */
+const d0=new Date();$("sMonth").value=d0.getFullYear()+"-"+pad(d0.getMonth()+1);
+["sMonth","sRoom"].forEach(id=>$(id).addEventListener("change",renderSummary));
+function renderSummary(){
+  const mo=$("sMonth").value,room=$("sRoom").value;
+  const bk=bookings.filter(b=>b.date.startsWith(mo)&&(!room||b.room===room));
+  const used=bk.filter(b=>b.status==="approved"||b.status==="done");
+  const hours=used.reduce((a,b)=>a+(toMin(b.end)-toMin(b.start))/60,0);
+  const rp=reports.filter(r=>r.date.startsWith(mo)&&(!room||r.room===room));
+  const avg=rp.length?Math.round(rp.reduce((a,r)=>a+r.score,0)/rp.length):null;
+  const lateReturn=used.filter(b=>b.status==="approved"&&b.date<todayStr()).length;
+  $("sStats").innerHTML=[
+    [bk.length,"Lượt đăng ký"],[used.length,"Lượt được sử dụng"],[hours.toFixed(1),"Giờ sử dụng"],
+    [bk.filter(b=>b.status==="pending").length,"Đang chờ duyệt"],[lateReturn,"Chưa xác nhận trả phòng"],
+    [rp.length,"Báo cáo 6S-3R"],[avg==null?"–":avg+"%","Điểm 6S trung bình"]
+  ].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  // trend chart
+  const all=reports.filter(r=>!room||r.room===room).sort((a,b)=>a.date.localeCompare(b.date)).slice(-24);
+  if(all.length<2){$("sChart").innerHTML='<div class="meta">Cần ít nhất 2 báo cáo để vẽ xu hướng.</div>'}
+  else{
+    const W=Math.max(520,all.length*40),H=200,pl=34,pr=12,pt=12,pb=34,x=i=>pl+i*(W-pl-pr)/(all.length-1),y=v=>pt+(100-v)*(H-pt-pb)/100;
+    let g="";[60,75,90,100].forEach(v=>{g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="${v===100?0:3}"/><text x="${pl-6}" y="${y(v)+4}" font-size="10" text-anchor="end" fill="var(--muted)">${v}</text>`});
+    const pts=all.map((r,i)=>`${x(i)},${y(r.score)}`).join(" ");
+    g+=`<polyline points="${pts}" fill="none" stroke="var(--jade)" stroke-width="2"/>`;
+    all.forEach((r,i)=>{g+=`<circle cx="${x(i)}" cy="${y(r.score)}" r="3.5" fill="var(--jade)"><title>${fmtDate(r.date)}: ${r.score}%</title></circle>`;
+      if(all.length<=12||i%2===0)g+=`<text x="${x(i)}" y="${H-12}" font-size="10" text-anchor="middle" fill="var(--muted)">${r.date.slice(8,10)}/${r.date.slice(5,7)}</text>`});
+    $("sChart").innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Xu hướng điểm 6S-3R">${g}</svg>`;
+  }
+  $("sGroups").innerHTML=rp.length?GROUPS.map(gr=>{const v=rp.map(r=>r.groups&&r.groups[gr.k]).filter(x=>x!=null);const a=v.length?Math.round(v.reduce((p,q)=>p+q,0)/v.length):null;
+    return `<div style="margin:6px 0"><div class="s-head"><span>${esc(gr.k)} · ${esc(gr.n)}</span><b>${a==null?"N/A":a+"%"}</b></div>
+    <div style="height:8px;background:var(--line);border-radius:4px"><div style="height:8px;width:${a||0}%;background:${a==null?"transparent":a>=90?"var(--ok)":a>=75?"var(--jade)":a>=60?"var(--amber)":"var(--red)"};border-radius:4px"></div></div></div>`}).join("")
+    :'<div class="meta">Chưa có báo cáo trong tháng.</div>';
+}
+
+/* ---------- CSV ---------- */
+const csvCell=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+function toCsv(rows){return "\uFEFF"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n")}
+async function saveCsv(name,rows){
+  const m=$("dlMsg");
+  const url=URL.createObjectURL(new Blob([toCsv(rows)],{type:"text/csv;charset=utf-8"}));
+  const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);showMsg(m,"Đã tạo file "+name,true);
+}
+$("dlBk").addEventListener("click",()=>{const mo=$("sMonth").value;
+  saveCsv(`muon-phong-${mo}.csv`,[["Ngày","Từ","Đến","Phòng","Người mượn","Đơn vị","ĐT","Mục đích","Số người","GV phụ trách","Thiết bị","Ghi chú","Trạng thái","Phản hồi","Tình trạng khi trả"],
+   ...bookings.filter(b=>b.date.startsWith(mo)).sort((a,b)=>(a.date+a.start).localeCompare(b.date+b.start))
+   .map(b=>[b.date,b.start,b.end,b.room,b.name,b.unit,b.phone,b.purpose,b.people,b.gv,(b.equipment||[]).join("; "),b.note,STATUS[b.status],b.reviewNote,b.returnCondition])])});
+$("dlRp").addEventListener("click",()=>{const mo=$("sMonth").value;
+  saveCsv(`bao-cao-6s3r-${mo}.csv`,[["Ngày","Kỳ","Phòng","Người đánh giá","Điểm %","Xếp loại",...GROUPS.map(g=>g.k+" "+g.n),...ALL_ITEMS.map(i=>i.code),"Tồn tại","Khắc phục","Phụ trách","Hạn"],
+   ...reports.filter(r=>r.date.startsWith(mo)).sort((a,b)=>a.date.localeCompare(b.date))
+   .map(r=>[r.date,r.period,r.room,r.assessor,r.score,grade(r.score)[0],...GROUPS.map(g=>r.groups?.[g.k]??"N/A"),...ALL_ITEMS.map(i=>r.scores?.[i.code]==="na"?"N/A":r.scores?.[i.code]),r.issues,r.action,r.owner,r.deadline])])});
+
+/* ---------- admin rooms ---------- */
+$("aSave").addEventListener("click",async()=>{
+  const list=$("aRooms").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  if(!list.length)return showMsg($("aMsg"),"Cần ít nhất một phòng.");
+  try{if(live){await api("saveRooms",{rooms:list});await load()}else{rooms=list;fillRooms();renderAll()}showMsg($("aMsg"),"Đã lưu.",true)}
+  catch(e){showMsg($("aMsg"),"Không lưu được: "+(e.message||e.code))}
+});
+
+function renderAll(){renderStatus();renderMine();renderCal();renderReports();if(!$("tab-sum").classList.contains("hidden"))renderSummary()}
+
+/* ---------- init ---------- */
+fillRooms();refreshScore();renderAll();
+setInterval(renderStatus,60000);
+
+$("bName").value=LS.get("ptt_name")||"";$("bUnit").value=LS.get("ptt_unit")||"";$("rWho").value=LS.get("ptt_who")||"";
+$("loginBtn").addEventListener("click",async()=>{pin=$("loginPin").value.trim();
+  try{await api("checkPin");SS.set("ptt_pin",pin);showMsg($("loginMsg"),"Đã đăng nhập quản trị.",true);await load()}
+  catch(e){pin=null;SS.set("ptt_pin",null);showMsg($("loginMsg"),e.message)}});
+$("logoutBtn").addEventListener("click",async()=>{pin=null;SS.set("ptt_pin",null);isAdmin=false;await load();renderAll()});
+if(!live){$("offline").textContent="Chưa cấu hình API_URL: trang đang chạy thử, dữ liệu không được lưu.";$("offline").classList.remove("hidden")}
+else{load();setInterval(()=>{if(!document.hidden)load()},30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()})}
+/* QR */
+$("qrBtn").addEventListener("click",()=>{const box=$("qrBox");box.innerHTML="";box.classList.remove("hidden");
+  const u=location.href.split("#")[0].split("?")[0];
+  if(window.QRCode){new QRCode(box,{text:u,width:220,height:220,colorDark:"#1E5B4F",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.Q})}
+  const p=document.createElement("div");p.className="meta";p.textContent=u;box.appendChild(p)});
+})();
+</script>
+</body>
+</html>
